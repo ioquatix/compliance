@@ -16,5 +16,14 @@ describe Compliance do
 		
 		expect(document.requirements.size).to be > 0
 		expect(document.attestations.size).to be > 0
+		
+		policy = Compliance::Policy.new
+		results = document.check(policy).to_h do |requirement, satisfied, unsatisfied|
+			[requirement.id, satisfied.any?]
+		end
+		
+		expect(results.size).to be > 0
+		expect(results["PRJ-1"]).to be_truthy
+		expect(results["PRJ-2"]).to be_falsey
 	end
 end

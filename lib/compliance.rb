@@ -6,3 +6,4 @@
 require_relative 'compliance/version'
 require_relative 'compliance/document'
 require_relative 'compliance/loader'
+require_relative 'compliance/policy'

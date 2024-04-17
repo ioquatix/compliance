@@ -48,7 +48,7 @@ module Compliance
 				satisfied = []
 				unsatisfied = []
 				
-				attestations.each do |attestation|
+				attestations&.each do |attestation|
 					if policy.satisfies?(requirement, attestation)
 						satisfied << attestation
 					else
