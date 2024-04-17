@@ -12,7 +12,7 @@ module Compliance
 	# Load compliance data from JSON files.
 	module Loader
 		def self.add(compliance, document)
-			compliance[:requirements].each do |metadata|
+			compliance[:requirements]&.each do |metadata|
 				document.add_requirement(Requirement.new(metadata))
 			end
 			

@@ -3,6 +3,12 @@
 # Released under the MIT License.
 # Copyright, 2024, by Samuel Williams.
 
+def initialize(...)
+	super
+	
+	require 'compliance'
+end
+
 def document
 	document = Compliance::Document.new
 	
@@ -21,15 +27,15 @@ def check(input:)
 	policy = Compliance::Policy.new
 	document = input || self.document
 	
-	unsatisfied = {}
+	failed_requirements = {}
 	
 	document.check(policy) do |requirement, satisfied, unsatisfied|
 		Console.debug(self) {"Requirement #{requirement.id} is #{satisfied.any? ? "satisfied." : "not satisfied!"}"}
 		
 		if satisfied.empty?
-			unsatisfied[requirement.id] = requirement
+			failed_requirements[requirement.id] = requirement
 		end
 	end
 	
-	raise Compliance::Error.new(unsatisfied) unless unsatisfied.empty?
+	raise Compliance::Error.new(failed_requirements) unless failed_requirements.empty?
 end
