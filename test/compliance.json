@@ -1,0 +1,19 @@
+{
+	"requirements": [
+		{
+			"id": "PRJ-1",
+			"description": "The project must have a readme file."
+		},
+		{
+			"id": "PRJ-2",
+			"description": "The project must have a license file."
+		}
+	],
+	
+	"attestations": [
+		{
+			"id": "PRJ-1",
+			"by": "Alice"
+		}
+	]
+}
