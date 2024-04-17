@@ -4,6 +4,7 @@
 # Copyright, 2024, by Samuel Williams.
 
 module Compliance
+	# Represents a requirement that can be satisfied by an attestation.
 	class Requirement
 		def initialize(metadata)
 			@metadata = metadata
@@ -17,10 +18,12 @@ module Compliance
 			as_json.to_json(...)
 		end
 		
+		# The unique identifier for this requirement.
 		def id
 			@metadata[:id]
 		end
 		
+		# The metadata associated with this requirement.
 		attr :metadata
 	end
 end

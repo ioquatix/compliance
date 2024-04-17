@@ -9,6 +9,7 @@ require_relative 'attestation'
 require 'json'
 
 module Compliance
+	# Load compliance data from JSON files.
 	module Loader
 		def self.add(compliance, document)
 			compliance[:requirements].each do |metadata|
@@ -20,6 +21,9 @@ module Compliance
 			end
 		end
 		
+		# Load compliance data from a directory.
+		# @parameter root [String] The root directory to load compliance data from.
+		# @parameter document [Document] The document to load compliance data into.
 		def self.load(root, document)
 			compliance_json_path = File.expand_path("compliance.json", root)
 			
