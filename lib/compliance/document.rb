@@ -3,23 +3,42 @@
 # Released under the MIT License.
 # Copyright, 2024, by Samuel Williams.
 
+require_relative 'import'
 require_relative 'requirement'
 require_relative 'attestation'
 
 module Compliance
 	# Represents a document containing requirements and attestations.
 	class Document
-		def initialize
-			@requirements = []
-			@attestations = []
+		def self.load(path)
+			data = JSON.load_file(path, symbolize_names: true)
 			
-			@attestations_by_id = {}
+			self.new.tap do |document|
+				data[:imports]&.each do |import|
+					document.imports << Import.new(import)
+				end
+				
+				data[:requirements]&.each do |metadata|
+					document.requirements << Requirement.new(metadata)
+				end
+				
+				data[:attestations]&.each do |metadata|
+					document.attestations << Attestation.new(metadata)
+				end
+			end
+		end
+		
+		def initialize(imports: [], requirements: [], attestations: [])
+			@imports = imports
+			@requirements = requirements
+			@attestations = attestations
 		end
 		
 		def as_json(...)
 			{
-				requirements: @requirements,
-				attestations: @attestations
+				imports: @imports.map(&:as_json),
+				requirements: @requirements.map(&:as_json),
+				attestations: @attestations.map(&:as_json)
 			}
 		end
 		
@@ -27,41 +46,8 @@ module Compliance
 			as_json.to_json(...)
 		end
 		
+		attr :imports
 		attr :requirements
 		attr :attestations
-		
-		# Add a requirement to the document.
-		def add_requirement(requirement)
-			@requirements << requirement
-		end
-		
-		# Add an attestation to the document.
-		# @parameter attestation [Attestation] The attestation to add to the document.
-		def add_attestation(attestation)
-			@attestations << attestation
-			(@attestations_by_id[attestation.id] ||= Array.new) << attestation
-		end
-		
-		# Check the document against a given policy.
-		def check(policy)
-			return to_enum(:check, policy) unless block_given?
-			
-			@requirements.each do |requirement|
-				attestations = @attestations_by_id[requirement.id]
-				
-				satisfied = []
-				unsatisfied = []
-				
-				attestations&.each do |attestation|
-					if policy.satisfies?(requirement, attestation)
-						satisfied << attestation
-					else
-						unsatisfied << attestation
-					end
-				end
-				
-				yield requirement, satisfied, unsatisfied
-			end
-		end
 	end
 end

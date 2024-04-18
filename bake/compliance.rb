@@ -9,27 +9,16 @@ def initialize(...)
 	require 'compliance'
 end
 
-def document
-	document = Compliance::Document.new
-	
-	::Gem.loaded_specs.each do |name, spec|
-		Console.logger.debug(self) {"Checking gem #{name}: #{spec.full_gem_path}..."}
-		
-		if path = spec.full_gem_path and File.directory?(path)
-			Compliance::Loader.load(path, document)
-		end
-	end
-	
-	return document
+def policy
+	default_policy
 end
 
-def check(input:)
-	policy = Compliance::Policy.new
-	document = input || self.document
-	
+def check
+	policy = default_policy
+
 	failed_requirements = {}
 	
-	document.check(policy) do |requirement, satisfied, unsatisfied|
+	results = policy.check do |requirement, satisfied, unsatisfied|
 		Console.debug(self) {"Requirement #{requirement.id} is #{satisfied.any? ? "satisfied." : "not satisfied!"}"}
 		
 		if satisfied.empty?
@@ -37,5 +26,17 @@ def check(input:)
 		end
 	end
 	
-	raise Compliance::Error.new(failed_requirements) unless failed_requirements.empty?
+	if failed_requirements.any?
+		raise Compliance::Error.new(failed_requirements)
+	else
+		Console.debug(self) {"All requirements are satisfied."}
+		return results
+	end
+end
+
+private
+
+def default_policy
+	loader = Compliance::Loader.default([context.root])
+	Compliance::Policy.default(loader)
 end

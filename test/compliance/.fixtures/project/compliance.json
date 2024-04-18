@@ -1,0 +1,6 @@
+{
+	"imports": ["requirements"],
+	"attestations": [
+		{"id": "REQ-1"}
+	]
+}

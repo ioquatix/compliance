@@ -10,15 +10,20 @@ describe Compliance do
 		expect(Compliance::VERSION).to be =~ /\A\d+\.\d+\.\d+\z/
 	end
 	
+	let(:loader) {Compliance::Loader.new}
+	let(:compliance_path) {File.expand_path("compliance.json", __dir__)}
+	
 	it "can load document" do
-		document = Compliance::Document.new
-		Compliance::Loader.load(__dir__, document)
+		document = Compliance::Document.load(compliance_path)
 		
+		expect(document.imports.size).to be == 0
 		expect(document.requirements.size).to be > 0
 		expect(document.attestations.size).to be > 0
 		
 		policy = Compliance::Policy.new
-		results = document.check(policy).to_h do |requirement, satisfied, unsatisfied|
+		policy.add(document, loader)
+		
+		results = policy.check.to_h do |requirement, satisfied, unsatisfied|
 			[requirement.id, satisfied.any?]
 		end
 		

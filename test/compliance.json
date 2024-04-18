@@ -1,4 +1,7 @@
 {
+	"import": [
+		"OWASP-ASVS-5.0"
+	],
 	"requirements": [
 		{
 			"id": "PRJ-1",
