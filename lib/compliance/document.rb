@@ -10,6 +10,10 @@ require_relative 'attestation'
 module Compliance
 	# Represents a document containing requirements and attestations.
 	class Document
+		def self.path(root)
+			File.expand_path("compliance.json", root)
+		end
+		
 		def self.load(path)
 			data = JSON.load_file(path, symbolize_names: true)
 			
@@ -35,11 +39,19 @@ module Compliance
 		end
 		
 		def as_json(...)
-			{
-				imports: @imports.map(&:as_json),
-				requirements: @requirements.map(&:as_json),
-				attestations: @attestations.map(&:as_json)
-			}
+			Hash.new.tap do |hash|
+				if @imports.any?
+					hash[:imports] = @imports.map(&:as_json)
+				end
+				
+				if @requirements.any?
+					hash[:requirements] = @requirements.map(&:as_json)
+				end
+				
+				if @attestations.any?
+					hash[:attestations] = @attestations.map(&:as_json)
+				end
+			end
 		end
 		
 		def to_json(...)

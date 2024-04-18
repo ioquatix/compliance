@@ -25,5 +25,9 @@ module Compliance
 		
 		# The metadata associated with this requirement.
 		attr :metadata
+		
+		def [] key
+			@metadata[key]
+		end
 	end
 end

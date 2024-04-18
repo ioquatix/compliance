@@ -8,6 +8,23 @@ module Compliance
 	class Error < StandardError
 		def initialize(unsatisfied)
 			super "Unsatisfied requirements: #{unsatisfied.keys.join(', ')}"
+			
+			@unsatisfied = unsatisfied
+		end
+		
+		attr :unsatisfied
+		
+		def detailed_message(...)
+			buffer = String.new
+			buffer << super << "\n"
+			
+			@unsatisfied.map do |id, requirement|
+				if description = requirement[:description]
+					buffer << "\t- #{id}: #{description}" << "\n"
+				end
+			end
+			
+			buffer
 		end
 	end
 end

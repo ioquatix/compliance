@@ -6,6 +6,9 @@
 module Compliance
 	# Represents an attestation of compliance with a requirement.
 	class Attestation
+		class Error < StandardError
+		end
+		
 		def initialize(metadata)
 			@metadata = metadata
 		end
@@ -25,5 +28,9 @@ module Compliance
 		
 		# The metadata associated with this attestation.
 		attr :metadata
+		
+		def [] key
+			@metadata[key]
+		end
 	end
 end
