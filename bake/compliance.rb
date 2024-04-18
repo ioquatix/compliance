@@ -25,6 +25,24 @@ def list
 	end
 end
 
+# Show a specific requirement and any associated attestations.
+# @parameter id [String] The unique identifier for the requirement.
+def show(id)
+	policy = self.policy
+	
+	requirement = policy.requirements[id]
+	
+	if requirement
+		$stdout.puts "Requirement: #{requirement.id}"
+		$stdout.puts JSON.pretty_generate(requirement)
+	end
+	
+	policy.attestations[id]&.each do |attestations|
+		$stdout.puts "Attestation: #{attestation.id}"
+		$stdout.puts JSON.pretty_generate(attestation)
+	end
+end
+
 # Check compliance with the policy.
 def check
 	policy = self.policy
@@ -45,47 +63,4 @@ def check
 		Console.debug(self) {"All requirements are satisfied."}
 		return results
 	end
-end
-
-# Attest to a requirement.
-# @parameter id [String] The unique identifier for the attestation, matching the requirement.
-# @parameter description [String] A description of how the requirement is satisfied.
-# @parameter by [String] The entity attesting to the requirement.
-def attest(id, description: nil, by: nil)
-	compliance_root = Compliance::Document.path(context.root)
-	
-	if File.exist?(compliance_root)
-		document = Compliance::Document.load(compliance_root)
-	else
-		document = Compliance::Document.new
-	end
-	
-	attestation = self.attestation_for(id, document)
-	
-	if description
-		attestation.metadata[:description] = description
-	end
-	
-	if by
-		attestation.metadata[:by] = by
-	end
-	
-	File.write(compliance_root, JSON.pretty_generate(document))
-	
-	return attestation
-end
-
-private
-
-def attestation_for(id, document)
-	document.attestations.each do |attestation|
-		if attestation.id == id
-			return attestation
-		end
-	end
-	
-	attestation = Compliance::Attestation.new(id: id)
-	document.attestations << attestation
-	
-	return attestation
 end
