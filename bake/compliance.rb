@@ -9,12 +9,23 @@ def initialize(...)
 	require 'compliance'
 end
 
+# Load the default compliance policy.
 def policy
 	loader = Compliance::Loader.default([context.root])
 	
 	return Compliance::Policy.default(loader)
 end
 
+# List available compliance documents.
+def list
+	loader = Compliance::Loader.default([context.root])
+	
+	loader.cache.map do |name, path|
+		{name: name, path: path}
+	end
+end
+
+# Check compliance with the policy.
 def check
 	policy = self.policy
 
@@ -36,7 +47,11 @@ def check
 	end
 end
 
-def attest(id)
+# Attest to a requirement.
+# @parameter id [String] The unique identifier for the attestation, matching the requirement.
+# @parameter description [String] A description of how the requirement is satisfied.
+# @parameter by [String] The entity attesting to the requirement.
+def attest(id, description: nil, by: nil)
 	compliance_root = Compliance::Document.path(context.root)
 	
 	if File.exist?(compliance_root)
@@ -45,16 +60,32 @@ def attest(id)
 		document = Compliance::Document.new
 	end
 	
-	attestation = Compliance::Attestation.new(id: id)
+	attestation = self.attestation_for(id, document)
 	
-	# Check if the attestation already exists:
-	document.attestations.each do |existing_attestation|
-		if existing_attestation.id == id
-			raise Compliance::Attestation::Error.new("Attestation with id #{id} already exists!")
+	if description
+		attestation.metadata[:description] = description
+	end
+	
+	if by
+		attestation.metadata[:by] = by
+	end
+	
+	File.write(compliance_root, JSON.pretty_generate(document))
+	
+	return attestation
+end
+
+private
+
+def attestation_for(id, document)
+	document.attestations.each do |attestation|
+		if attestation.id == id
+			return attestation
 		end
 	end
 	
+	attestation = Compliance::Attestation.new(id: id)
 	document.attestations << attestation
 	
-	File.write(compliance_root, JSON.pretty_generate(document))
+	return attestation
 end

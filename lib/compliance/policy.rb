@@ -6,6 +6,10 @@
 module Compliance
 	# Represents a policy for checking compliance.
 	class Policy
+		class Error < StandardError
+		end
+		
+		# Load the policy from a given loader.
 		def self.default(loader = Loader.default)
 			self.new.tap do |policy|
 				loader.documents.each do |document|
@@ -17,6 +21,17 @@ module Compliance
 		def initialize
 			@requirements = {}
 			@attestations = {}
+		end
+		
+		def as_json(...)
+			{
+				requirements: @requirements,
+				attestations: @attestations
+			}
+		end
+		
+		def to_json(...)
+			as_json.to_json(...)
 		end
 		
 		attr :requirements

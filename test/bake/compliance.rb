@@ -39,7 +39,10 @@ describe "bake/compliance.rb" do
 		context.lookup("compliance:attest").call("REQ-1")
 		
 		document = Compliance::Document.load(Compliance::Document.path(context.root))
+		attestations = document.attestations.to_h do |attestation|
+			[attestation.id, attestation]
+		end
 		
-		expect(document.attestations).to have_keys("REQ-1")
+		expect(attestations).to have_keys("REQ-1")
 	end
 end

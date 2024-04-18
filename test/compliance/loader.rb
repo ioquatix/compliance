@@ -12,7 +12,7 @@ describe Compliance::Loader do
 	
 	it "can load requirements from a compliance library" do
 		loader = Compliance::Loader.new([File.expand_path(".fixtures/library", __dir__)])
-		document = loader.document_for("requirements")
+		document = Compliance::Document.load(loader.cache["requirements"])
 		
 		expect(document).to be_a(Compliance::Document)
 		expect(document.requirements.size).to be == 2

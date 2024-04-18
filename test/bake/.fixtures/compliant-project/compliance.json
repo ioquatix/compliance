@@ -1,10 +1,20 @@
 {
-	"requirements": [
-		{"id": "REQ-1", "description": "Requirement 1"},
-		{"id": "REQ-2", "description": "Requirement 2"}
-	],
-	"attestations": [
-		{"id": "REQ-1"},
-		{"id": "REQ-2"}
-	]
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "description": "Requirement 1"
+    },
+    {
+      "id": "REQ-2",
+      "description": "Requirement 2"
+    }
+  ],
+  "attestations": [
+    {
+      "id": "REQ-1"
+    },
+    {
+      "id": "REQ-2"
+    }
+  ]
 }

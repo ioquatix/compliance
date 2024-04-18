@@ -24,11 +24,7 @@ module Compliance
 		attr :name
 		
 		def resolve(policy, loader)
-			if document = loader.document_for(@name)
-				policy.add(document, loader)
-			else
-				raise Error.new("Could not resolve import: #{@name}")
-			end
+			loader.import(@name, policy)
 		end
 	end
 end

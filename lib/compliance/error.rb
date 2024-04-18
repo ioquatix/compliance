@@ -7,7 +7,7 @@ module Compliance
 	# Represents an error that occurs when requirements are not satisfied.
 	class Error < StandardError
 		def initialize(unsatisfied)
-			super "Unsatisfied requirements: #{unsatisfied.keys.join(', ')}"
+			super "#{unsatisfied.size} unsatisfied requirement(s): #{unsatisfied.keys.join(', ')}"
 			
 			@unsatisfied = unsatisfied
 		end

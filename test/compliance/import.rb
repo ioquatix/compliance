@@ -25,6 +25,6 @@ describe Compliance::Import do
 		
 		expect do
 			import.resolve(policy, loader)
-		end.to raise_exception(Compliance::Import::Error, message: be =~ /Could not resolve/)
+		end.to raise_exception(Compliance::Loader::Error, message: be =~ /Could not find import/)
 	end
 end
