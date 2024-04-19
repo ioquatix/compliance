@@ -37,21 +37,33 @@ module Compliance
 		attr :requirements
 		attr :attestations
 		
+		def add_requirement(requirement)
+			if existing_requirement = @requirements[requirement.id]
+				@requirements[requirement.id] = existing_requirement.merge(requirement)
+			else
+				@requirements[requirement.id] = requirement
+			end
+		end
+		
+		def add_attestation(attestation)
+			(@attestations[attestation.id] ||= Array.new) << attestation
+		end
+		
+		def add_import(import, loader)
+			import.resolve(self, loader)
+		end
+		
 		def add(document, loader)
 			document.requirements.each do |requirement|
-				if @requirements.key?(requirement.id)
-					raise Error.new("Duplicate requirement: #{requirement.id}")
-				end
-				
-				@requirements[requirement.id] = requirement
+				add_requirement(requirement)
 			end
 			
 			document.attestations.each do |attestation|
-				(@attestations[attestation.id] ||= Array.new) << attestation
+				add_attestation(attestation)
 			end
 			
 			document.imports.each do |import|
-				import.resolve(self, loader)
+				add_import(import, loader)
 			end
 		end
 		

@@ -29,5 +29,9 @@ module Compliance
 		def [] key
 			@metadata[key]
 		end
+		
+		def merge(other)
+			self.class.new(@metadata.merge(other.metadata))
+		end
 	end
 end
